@@ -9,6 +9,7 @@ import {
   CheckSquare,
   CircleDot,
   FolderOpen,
+  GraduationCap,
   Home,
   Library,
   LogOut,
@@ -34,6 +35,7 @@ const mainNavigation = [
 ];
 
 const resourceNavigation = [
+  { href: "/semesters", label: "学期", icon: GraduationCap },
   { href: "/plans/today", label: "计划", icon: CalendarRange },
   { href: "/materials", label: "资料", icon: FolderOpen },
   { href: "/knowledge", label: "知识库", icon: Library },

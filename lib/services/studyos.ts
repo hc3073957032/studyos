@@ -306,3 +306,24 @@ export async function getAnalyticsData(userId: string) {
     courses,
   };
 }
+
+export async function getUserProfile(userId: string) {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      createdAt: true,
+      _count: {
+        select: {
+          courses: true,
+          tasks: true,
+          notes: true,
+          studySessions: true,
+          reviews: true,
+        },
+      },
+    },
+  });
+}

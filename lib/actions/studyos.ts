@@ -1,6 +1,7 @@
 "use server";
 
 import type { GoalType, TaskPriority } from "@prisma/client";
+import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -324,4 +325,59 @@ export async function finishFocusAction(formData: FormData) {
     sessionId: session.id,
     durationSeconds: session.durationSeconds ?? 0,
   };
+}
+
+export async function createMilestoneAction(formData: FormData) {
+  const userId = await requireUserId();
+  const goalId = formText(formData, "goalId");
+  const latest = await prisma.goalMilestone.findMany({
+    where: { goalId, goal: { userId } },
+    orderBy: { order: "desc" },
+    take: 1,
+  });
+  await prisma.goalMilestone.create({
+    data: {
+      goalId,
+      title: formText(formData, "title"),
+      description: nullableText(formData, "description"),
+      order: (latest[0]?.order ?? 0) + 1,
+    },
+  });
+  revalidatePath(`/goals/${goalId}`);
+}
+
+export async function toggleMilestoneAction(formData: FormData) {
+  const userId = await requireUserId();
+  const id = formText(formData, "id");
+  const completed = formData.get("completed") === "on";
+  const milestone = await prisma.goalMilestone.findFirst({
+    where: { id, goal: { userId } },
+    include: { goal: { include: { milestones: true } } },
+  });
+  if (!milestone) return;
+  await prisma.goalMilestone.update({
+    where: { id },
+    data: { completed, completedAt: completed ? new Date() : null },
+  });
+  const total = milestone.goal.milestones.length;
+  const done = milestone.goal.milestones.filter((item) => item.completed).length + (completed ? 1 : -1);
+  await prisma.goal.update({
+    where: { id: milestone.goalId },
+    data: { progress: total > 0 ? Math.round((Math.max(0, done) / total) * 100) : 0 },
+  });
+  revalidatePath("/goals", "layout");
+}
+export async function updateProfileAction(formData: FormData) {
+  const userId = await requireUserId();
+  await prisma.user.update({
+    where: { id: userId },
+    data: { name: formText(formData, "name") },
+  });
+  revalidatePath("/settings");
+}
+export async function deleteMistakeAction(formData: FormData) {
+  const userId = await requireUserId();
+  await mistakeMutations.remove(userId, formText(formData, "id"));
+  revalidatePath("/reviews/mistakes");
+  redirect("/reviews/mistakes");
 }
