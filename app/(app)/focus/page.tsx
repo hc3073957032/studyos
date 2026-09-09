@@ -36,6 +36,7 @@ export default async function FocusPage({
             ? {
                 id: dashboard.activeSession.id,
                 startedAt: dashboard.activeSession.startAt.toISOString(),
+                type: dashboard.activeSession.type,
               }
             : undefined
         }

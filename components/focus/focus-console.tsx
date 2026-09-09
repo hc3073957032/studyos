@@ -14,6 +14,7 @@ type FocusConsoleProps = {
   activeSession?: {
     id: string;
     startedAt: string;
+    type?: "POMODORO" | "TIMER" | "COUNTDOWN";
   };
 };
 
@@ -30,7 +31,7 @@ export function FocusConsole({
   initialTaskId,
   activeSession,
 }: FocusConsoleProps) {
-  const [type, setType] = useState<"POMODORO" | "TIMER" | "COUNTDOWN">("POMODORO");
+  const [type, setType] = useState<"POMODORO" | "TIMER" | "COUNTDOWN">(activeSession?.type ?? "POMODORO");
   const [courseId, setCourseId] = useState("");
   const [taskId, setTaskId] = useState(initialTaskId ?? "");
   const [sessionId, setSessionId] = useState<string | null>(activeSession?.id ?? null);

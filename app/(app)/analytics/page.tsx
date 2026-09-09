@@ -1,16 +1,16 @@
 import { redirect } from "next/navigation";
-import { BarChart3, Clock3, ListChecks, Sparkles } from "lucide-react";
+import { BarChart3, CircleCheck, Clock3, ListChecks, Sparkles, Trophy } from "lucide-react";
 
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { Progress } from "@/components/ui/progress";
 import { formatMinutes, formatPercent } from "@/lib/utils";
-import { getAnalyticsData, getCurrentUserId } from "@/lib/services/studyos";
+import { getAnalyticsData, getCurrentUserId, getDashboardData } from "@/lib/services/studyos";
 
 export default async function AnalyticsPage() {
   const userId = await getCurrentUserId();
   if (!userId) redirect("/login");
-  const data = await getAnalyticsData(userId);
+  const [data, dashboard] = await Promise.all([getAnalyticsData(userId), getDashboardData(userId)]);
 
   const dayTotals = new Map<string, number>();
   for (const item of data.dailyMinutes) {
@@ -107,6 +107,33 @@ export default async function AnalyticsPage() {
                     {formatPercent(course.progress)}
                   </span>
                   <Progress value={course.progress} className="w-24 sm:w-40" />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-8">
+            <h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-ink">
+              <Trophy className="size-4 text-secondary" aria-hidden />
+              成就
+            </h2>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                { title: "连续学习 7 天", earned: dashboard.streak >= 7 },
+                { title: "连续学习 30 天", earned: dashboard.streak >= 30 },
+                { title: "累计学习 10 小时", earned: data.totalMinutes >= 600 },
+                { title: "第一门课程", earned: data.courses.length >= 1 },
+                { title: "完成第一个任务", earned: data.completedTasks >= 1 },
+              ].map((achievement) => (
+                <div key={achievement.title} className="flex items-center gap-3 border border-line bg-surface px-4 py-3">
+                  {achievement.earned ? (
+                    <CircleCheck className="size-5 text-success" aria-hidden />
+                  ) : (
+                    <CircleCheck className="size-5 text-line" aria-hidden />
+                  )}
+                  <span className={achievement.earned ? "text-sm font-medium text-ink" : "text-sm text-secondary"}>
+                    {achievement.title}
+                  </span>
                 </div>
               ))}
             </div>
