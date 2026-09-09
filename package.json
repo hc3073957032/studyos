@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:start": "node scripts/db/start.mjs"
+    "db:start": "node scripts/db/start.mjs",
+    "open": "node scripts/dev.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",
