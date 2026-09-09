@@ -48,7 +48,7 @@ export default async function NewCoursePage() {
               name="color"
               type="color"
               defaultValue="#006edb"
-              className="h-10 w-16 cursor-pointer border border-line bg-surface p-1"
+              className="h-10 w-16 cursor-pointer overflow-hidden rounded-md border border-line bg-surface p-1"
             />
             <span className="text-sm text-secondary">课程标记颜色</span>
           </div>

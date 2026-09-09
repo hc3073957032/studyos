@@ -38,7 +38,7 @@ export default async function NotesPage() {
           actionHref="/notes/new"
         />
       ) : (
-        <div className="divide-y divide-line border border-line bg-surface">
+        <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
           {notes.map((note) => (
             <div key={note.id} className="group flex items-start gap-4 px-4 py-4">
               <div className="min-w-0 flex-1">

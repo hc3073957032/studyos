@@ -59,9 +59,9 @@ function NavLink({
     <Link
       href={href}
       className={cn(
-        "flex h-9 items-center gap-3 px-3 text-sm transition-colors duration-150",
+        "mx-1.5 flex h-9 items-center gap-3 rounded-md px-3 text-sm transition-all duration-200",
         active
-          ? "bg-subtle font-medium text-ink"
+          ? "bg-ink/[0.06] font-medium text-ink"
           : "text-secondary hover:bg-subtle/70 hover:text-ink",
       )}
     >
@@ -93,7 +93,7 @@ export function AppShell({
 
   return (
     <div className="min-h-screen bg-canvas">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-line bg-surface md:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-line/70 bg-surface/85 backdrop-blur-2xl md:flex">
         <Brand />
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <p className="px-3 pb-2 text-[11px] font-medium uppercase tracking-normal text-secondary/70">
@@ -141,14 +141,14 @@ export function AppShell({
       </aside>
 
       <div className="md:pl-60">
-        <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-line bg-canvas/85 px-4 backdrop-blur-md md:px-6">
+        <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-line/70 bg-canvas/70 px-4 backdrop-blur-xl md:px-6">
           <div className="flex items-center gap-2 md:hidden">
             <Brand />
           </div>
           <div className="hidden md:block">
             <Link
               href="/search"
-              className="flex h-9 w-64 items-center gap-2 border border-line bg-surface px-3 text-sm text-secondary/70 transition-colors hover:border-line/80 hover:bg-subtle/60"
+              className="flex h-9 w-64 items-center gap-2 overflow-hidden rounded-md border border-line bg-surface px-3 text-sm text-secondary/70 transition-colors hover:border-line/80 hover:bg-subtle/60"
             >
               <Search className="size-4" aria-hidden />
               <span>搜索课程、任务与笔记</span>
@@ -177,7 +177,7 @@ export function AppShell({
         </main>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex h-16 items-stretch overflow-x-auto border-t border-line bg-surface/95 backdrop-blur-md md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 flex h-16 items-stretch overflow-x-auto border-t border-line/70 bg-white/90 shadow-[0_-1px_16px_rgba(0,0,0,0.05)] backdrop-blur-2xl md:hidden">
         {[...mainNavigation, ...resourceNavigation].map((item) => {
           const active = isActive(item.href);
           const Icon = item.icon;

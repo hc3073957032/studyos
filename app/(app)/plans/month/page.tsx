@@ -26,7 +26,7 @@ export default async function MonthPlanPage() {
       {tasks.length === 0 ? (
         <EmptyState icon={CalendarDays} title="本月还没有任务" description="把目标拆成本月的里程碑。" />
       ) : (
-        <div className="divide-y divide-line border border-line bg-surface">
+        <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
           {tasks.map((task) => (
             <TaskRow key={task.id} task={task} />
           ))}

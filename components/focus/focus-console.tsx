@@ -80,7 +80,7 @@ export function FocusConsole({
   const isActive = Boolean(sessionId);
 
   return (
-    <section className="mx-auto w-full max-w-2xl border border-line bg-surface p-6 md:p-10">
+    <section className="mx-auto w-full max-w-2xl overflow-hidden rounded-md border border-line bg-surface p-6 md:p-10">
       <div className="mx-auto flex max-w-md flex-col items-center">
         <div className="grid w-full grid-cols-3 border border-line bg-canvas p-1">
           {(["POMODORO", "TIMER", "COUNTDOWN"] as const).map((mode) => (

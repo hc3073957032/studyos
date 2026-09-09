@@ -41,7 +41,7 @@ export default async function TasksPage() {
             actionHref="/tasks/new"
           />
         ) : (
-          <div className="divide-y divide-line border border-line bg-surface">
+          <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
             {active.map((task) => (
               <TaskRow key={task.id} task={task} />
             ))}
@@ -52,7 +52,7 @@ export default async function TasksPage() {
       {completed.length > 0 ? (
         <section className="mt-8">
           <h2 className="mb-3 text-base font-semibold text-ink">最近完成</h2>
-          <div className="divide-y divide-line border border-line bg-surface opacity-70">
+          <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface opacity-70">
             {completed.map((task) => (
               <TaskRow key={task.id} task={task} />
             ))}

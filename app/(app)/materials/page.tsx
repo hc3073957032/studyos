@@ -48,7 +48,7 @@ export default async function MaterialsPage() {
           actionHref="/materials/new"
         />
       ) : (
-        <div className="divide-y divide-line border border-line bg-surface">
+        <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
           {materials.map((material) => (
             <div key={material.id} className="group flex items-center gap-4 px-4 py-3">
               <div className="min-w-0 flex-1">

@@ -49,7 +49,7 @@ export default async function SearchPage({
         {groups.map(([label, items, base]) => (
           <section key={label}>
             <h2 className="mb-3 text-base font-semibold text-ink">{label}</h2>
-            <div className="divide-y divide-line border border-line bg-surface">
+            <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
               {items.map((item) => (
                 <Link key={item.id} href={`${base}${base === "/tasks" || base === "/notes" || base === "/knowledge" || base === "/materials" ? "" : item.id}`} className="block px-4 py-3 hover:bg-subtle/60">
                   <p className="text-sm font-medium text-ink">{item.name ?? item.title}</p>

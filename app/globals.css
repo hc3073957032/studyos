@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-canvas: #f7f7f8;
+  --color-canvas: #f5f5f7;
   --color-surface: #ffffff;
-  --color-subtle: #f1f1f3;
+  --color-subtle: #f1f1f4;
   --color-ink: #1d1d1f;
   --color-secondary: #6e6e73;
-  --color-line: #e4e4e7;
-  --color-accent: #006edb;
+  --color-line: #e4e4e8;
+  --color-accent: #0071e3;
   --color-accent-soft: #e8f1fb;
   --color-success: #1f8a4c;
   --color-warning: #b25000;
@@ -20,6 +20,11 @@
 @layer base {
   * {
     box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
   }
 
   html,
@@ -40,7 +45,9 @@
       "Microsoft YaHei",
       sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    overscroll-behavior-y: none;
   }
 
   button,
@@ -50,7 +57,27 @@
     font: inherit;
   }
 
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
   ::selection {
-    background: rgba(0, 110, 219, 0.18);
+    background: rgba(0, 113, 227, 0.16);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.16);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
   }
 }

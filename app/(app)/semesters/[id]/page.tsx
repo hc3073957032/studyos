@@ -49,7 +49,7 @@ export default async function SemesterDetailPage({
               还没有课程。
             </p>
           ) : (
-            <div className="divide-y divide-line border border-line bg-surface">
+            <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
               {semester.courses.map((course) => (
                 <Link
                   key={course.id}
@@ -76,7 +76,7 @@ export default async function SemesterDetailPage({
                 还没有关联目标。
               </p>
             ) : (
-              <div className="divide-y divide-line border border-line bg-surface">
+              <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
                 {semester.goals.map((goal) => (
                   <Link
                     key={goal.id}
@@ -100,7 +100,7 @@ export default async function SemesterDetailPage({
                 还没有任务。
               </p>
             ) : (
-              <div className="divide-y divide-line border border-line bg-surface">
+              <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
                 {semester.tasks.map((task) => (
                   <Link
                     key={task.id}

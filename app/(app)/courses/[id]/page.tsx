@@ -90,7 +90,7 @@ export default async function CourseDetailPage({
             还没有章节，先从第 1 章开始。
           </p>
         ) : (
-          <div className="divide-y divide-line border border-line bg-surface">
+          <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
             {course.chapters.map((chapter, index) => (
               <div key={chapter.id} className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center">
                 <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -131,7 +131,7 @@ export default async function CourseDetailPage({
           </div>
         )}
 
-        <form action={addChapterAction} className="mt-4 flex flex-col gap-3 border border-line bg-surface p-4 sm:flex-row">
+        <form action={addChapterAction} className="mt-4 flex flex-col gap-3 overflow-hidden rounded-md border border-line bg-surface p-4 sm:flex-row">
           <input type="hidden" name="courseId" value={course.id} />
           <input type="hidden" name="order" value={course.chapters.length + 1} />
           <div className="flex-1">
@@ -155,7 +155,7 @@ export default async function CourseDetailPage({
               还没有资料。
             </p>
           ) : (
-            <div className="divide-y divide-line border border-line bg-surface">
+            <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
               {course.materials.map((material) => (
                 <div key={material.id} className="px-4 py-3">
                   <p className="text-sm font-medium text-ink">{material.name}</p>
@@ -172,7 +172,7 @@ export default async function CourseDetailPage({
               还没有笔记。
             </p>
           ) : (
-            <div className="divide-y divide-line border border-line bg-surface">
+            <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
               {course.notes.map((note) => (
                 <Link key={note.id} href="/notes" className="block px-4 py-3 hover:bg-subtle/60">
                   <p className="text-sm font-medium text-ink">{note.title}</p>

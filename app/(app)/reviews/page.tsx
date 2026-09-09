@@ -43,7 +43,7 @@ export default async function ReviewsPage() {
           actionHref="/reviews/new"
         />
       ) : (
-        <div className="divide-y divide-line border border-line bg-surface">
+        <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
           {reviews.map((review) => (
             <div key={review.id} className="px-4 py-5">
               <div className="flex items-start justify-between gap-4">

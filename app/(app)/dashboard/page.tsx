@@ -43,7 +43,7 @@ export default async function DashboardPage() {
         }).format(now)}
       />
 
-      <dl className="grid grid-cols-1 border border-line bg-surface sm:grid-cols-3">
+      <dl className="grid grid-cols-1 overflow-hidden rounded-md border border-line bg-surface sm:grid-cols-3">
         <div className="border-b border-line p-5 sm:border-b-0 sm:border-r">
           <dt className="text-xs text-secondary">今日任务</dt>
           <dd className="mt-2 text-2xl font-semibold text-ink">
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
             actionLabel="安排任务"
           />
         ) : (
-          <div className="divide-y divide-line border border-line bg-surface">
+          <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
             {remainingTasks.map((task) => (
               <div key={task.id} className="flex items-center gap-3 px-4 py-3">
                 <form action={setTaskStatusAction}>
@@ -154,7 +154,7 @@ export default async function DashboardPage() {
           {data.courses.length === 0 ? (
             <EmptyState icon={BookOpen} title="还没有课程" description="创建课程后会在这里显示学习进度。" />
           ) : (
-            <div className="divide-y divide-line border border-line bg-surface">
+            <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
               {data.courses.map((course) => (
                 <Link key={course.id} href={`/courses/${course.id}`} className="block px-4 py-3 hover:bg-subtle/60">
                   <div className="flex items-center justify-between gap-4">
@@ -181,7 +181,7 @@ export default async function DashboardPage() {
           {data.goals.length === 0 ? (
             <EmptyState icon={Target} title="还没有目标" description="先写下一个长期目标，学习路径会更清楚。" />
           ) : (
-            <div className="divide-y divide-line border border-line bg-surface">
+            <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
               {data.goals.map((goal) => (
                 <Link key={goal.id} href={`/goals/${goal.id}`} className="block px-4 py-3 hover:bg-subtle/60">
                   <div className="flex items-center justify-between gap-4">

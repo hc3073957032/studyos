@@ -41,7 +41,7 @@ export default async function TodayPlanPage() {
           actionHref="/tasks/new"
         />
       ) : (
-        <div className="divide-y divide-line border border-line bg-surface">
+        <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
           {tasks.map((task) => (
             <TaskRow key={task.id} task={task} />
           ))}

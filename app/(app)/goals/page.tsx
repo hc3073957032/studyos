@@ -45,7 +45,7 @@ export default async function GoalsPage() {
           actionHref="/goals/new"
         />
       ) : (
-        <div className="divide-y divide-line border border-line bg-surface">
+        <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
           {goals.map((goal) => {
             const completedMilestones = goal.milestones.filter((item) => item.completed).length;
             return (

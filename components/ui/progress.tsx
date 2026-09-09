@@ -15,7 +15,7 @@ export function Progress({ value, className, ...props }: ProgressProps) {
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={normalized}
-      className={cn("h-1.5 w-full overflow-hidden bg-subtle", className)}
+      className={cn("h-1.5 w-full overflow-hidden rounded-full bg-subtle", className)}
       {...props}
     >
       <div

@@ -17,7 +17,7 @@ export function EmptyState({
   actionHref,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-start gap-4 border border-dashed border-line bg-surface/60 px-5 py-10">
+    <div className="flex flex-col items-start gap-4 overflow-hidden rounded-md border border-dashed border-line bg-surface/60 px-5 py-10">
       <div className="flex size-10 items-center justify-center bg-accent-soft text-accent">
         <Icon className="size-5" strokeWidth={1.8} aria-hidden />
       </div>

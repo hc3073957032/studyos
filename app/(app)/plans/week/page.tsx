@@ -26,7 +26,7 @@ export default async function WeekPlanPage() {
       {tasks.length === 0 ? (
         <EmptyState icon={CalendarRange} title="本周还没有任务" description="可以把本周任务排到具体日期。" />
       ) : (
-        <div className="divide-y divide-line border border-line bg-surface">
+        <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
           {tasks.map((task) => (
             <TaskRow key={task.id} task={task} />
           ))}

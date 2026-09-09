@@ -36,7 +36,7 @@ export default async function SettingsPage() {
         </section>
 
         <aside className="space-y-6">
-          <div className="border border-line bg-surface p-5">
+          <div className="overflow-hidden rounded-md border border-line bg-surface p-5">
             <div className="flex items-center gap-3">
               <div className="flex size-10 items-center justify-center bg-accent-soft text-accent">
                 <UserRound className="size-5" aria-hidden />

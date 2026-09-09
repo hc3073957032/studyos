@@ -46,7 +46,7 @@ export default async function MistakesPage() {
           actionHref="/reviews/mistakes/new"
         />
       ) : (
-        <div className="divide-y divide-line border border-line bg-surface">
+        <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
           {mistakes.map((mistake) => (
             <div key={mistake.id} className="px-4 py-5">
               <div className="flex flex-wrap items-start justify-between gap-3">

@@ -40,7 +40,7 @@ export default async function AnalyticsPage() {
         />
       ) : (
         <>
-          <dl className="grid grid-cols-2 border border-line bg-surface lg:grid-cols-4">
+          <dl className="grid grid-cols-2 overflow-hidden rounded-md border border-line bg-surface lg:grid-cols-4">
             <div className="border-b border-line p-5 lg:border-b-0 lg:border-r">
               <dt className="flex items-center gap-2 text-xs text-secondary">
                 <Clock3 className="size-4" aria-hidden />
@@ -73,7 +73,7 @@ export default async function AnalyticsPage() {
 
           <section className="mt-8">
             <h2 className="mb-4 text-base font-semibold text-ink">最近 14 天学习时长</h2>
-            <div className="border border-line bg-surface p-5">
+            <div className="overflow-hidden rounded-md border border-line bg-surface p-5">
               <div className="flex h-40 items-end gap-1.5">
                 {lastDays.map((day) => (
                   <div key={day.key} className="flex h-full flex-1 flex-col justify-end">
@@ -94,7 +94,7 @@ export default async function AnalyticsPage() {
 
           <section className="mt-8">
             <h2 className="mb-4 text-base font-semibold text-ink">课程进度</h2>
-            <div className="divide-y divide-line border border-line bg-surface">
+            <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
               {data.courses.map((course) => (
                 <div key={course.id} className="flex items-center gap-4 px-4 py-3">
                   <div className="min-w-0 flex-1">
@@ -125,7 +125,7 @@ export default async function AnalyticsPage() {
                 { title: "第一门课程", earned: data.courses.length >= 1 },
                 { title: "完成第一个任务", earned: data.completedTasks >= 1 },
               ].map((achievement) => (
-                <div key={achievement.title} className="flex items-center gap-3 border border-line bg-surface px-4 py-3">
+                <div key={achievement.title} className="flex items-center gap-3 overflow-hidden rounded-md border border-line bg-surface px-4 py-3">
                   {achievement.earned ? (
                     <CircleCheck className="size-5 text-success" aria-hidden />
                   ) : (

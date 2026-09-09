@@ -10,7 +10,7 @@ const tabs = [
 
 export function PlanTabs({ active }: { active: string }) {
   return (
-    <nav className="mb-5 inline-flex border border-line bg-surface p-0.5">
+    <nav className="mb-5 inline-flex overflow-hidden rounded-md border border-line bg-surface p-0.5">
       {tabs.map((tab) => (
         <Link
           key={tab.href}

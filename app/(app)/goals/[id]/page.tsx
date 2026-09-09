@@ -50,7 +50,7 @@ export default async function GoalDetailPage({
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
-          <section className="border border-line bg-surface p-5">
+          <section className="overflow-hidden rounded-md border border-line bg-surface p-5">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm text-secondary">完成进度</p>
@@ -78,7 +78,7 @@ export default async function GoalDetailPage({
                 还没有阶段，拆解后更容易坚持。
               </p>
             ) : (
-              <div className="divide-y divide-line border border-line bg-surface">
+              <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
                 {goal.milestones.map((milestone) => (
                   <div key={milestone.id} className="flex items-center gap-3 px-4 py-3">
                     <form action={toggleMilestoneAction}>
@@ -130,7 +130,7 @@ export default async function GoalDetailPage({
               还没有关联任务。
             </p>
           ) : (
-            <div className="divide-y divide-line border border-line bg-surface">
+            <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
               {goal.tasks.map((task) => (
                 <Link
                   key={task.id}
