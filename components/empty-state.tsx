@@ -1,13 +1,12 @@
+import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 
 interface EmptyStateProps {
   icon: LucideIcon;
   title: string;
   description: string;
   actionLabel?: string;
-  onAction?: () => void;
+  actionHref?: string;
 }
 
 export function EmptyState({
@@ -15,7 +14,7 @@ export function EmptyState({
   title,
   description,
   actionLabel,
-  onAction,
+  actionHref,
 }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-start gap-4 border border-dashed border-line bg-surface/60 px-5 py-10">
@@ -28,10 +27,13 @@ export function EmptyState({
           {description}
         </p>
       </div>
-      {actionLabel ? (
-        <Button variant="primary" size="sm" onClick={onAction}>
+      {actionLabel && actionHref ? (
+        <Link
+          href={actionHref}
+          className="inline-flex h-8 items-center justify-center bg-accent px-3 text-sm font-medium text-white transition-colors hover:bg-accent/90"
+        >
           {actionLabel}
-        </Button>
+        </Link>
       ) : null}
     </div>
   );
