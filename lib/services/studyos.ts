@@ -327,3 +327,72 @@ export async function getUserProfile(userId: string) {
     },
   });
 }
+export async function getNote(userId: string, id: string) {
+  return prisma.note.findFirst({
+    where: { id, userId },
+    include: {
+      course: { select: { id: true, name: true, color: true } },
+      chapter: { select: { id: true, title: true } },
+      knowledge: { select: { id: true, title: true } },
+    },
+  });
+}
+
+function tagSet(tags: string[]) {
+  return new Set(tags.map((tag) => tag.trim().toLowerCase()).filter(Boolean));
+}
+
+export async function buildKnowledgeNetwork(userId: string, maxNotes = 160) {
+  const notes = await prisma.note.findMany({
+    where: { userId },
+    select: {
+      id: true,
+      title: true,
+      tags: true,
+      courseId: true,
+      chapterId: true,
+      knowledgeId: true,
+      updatedAt: true,
+      course: { select: { name: true, color: true } },
+      knowledge: { select: { title: true } },
+    },
+    orderBy: { updatedAt: "desc" },
+    take: maxNotes,
+  });
+
+  const nodes = notes.map((note) => ({
+    id: note.id,
+    title: note.title,
+    tags: note.tags,
+    group: note.course?.color ?? "#0071e3",
+    course: note.course?.name ?? null,
+    knowledge: note.knowledge?.title ?? null,
+    updatedAt: note.updatedAt.toISOString(),
+  }));
+
+  const edgeKeys = new Set<string>();
+  const links: { source: string; target: string; strength: number }[] = [];
+
+  for (let i = 0; i < notes.length; i += 1) {
+    for (let j = i + 1; j < notes.length; j += 1) {
+      const a = notes[i];
+      const b = notes[j];
+      const tagsA = tagSet(a.tags);
+      const tagsB = tagSet(b.tags);
+      let strength = 0;
+      for (const tag of tagsA) {
+        if (tagsB.has(tag)) strength += 2;
+      }
+      if (a.courseId && a.courseId === b.courseId) strength += 1;
+      if (a.knowledgeId && a.knowledgeId === b.knowledgeId) strength += 2;
+      if (a.chapterId && a.chapterId === b.chapterId) strength += 1;
+      if (strength === 0) continue;
+      const key = [a.id, b.id].sort().join("|");
+      if (edgeKeys.has(key)) continue;
+      edgeKeys.add(key);
+      links.push({ source: a.id, target: b.id, strength });
+    }
+  }
+
+  return { nodes, links };
+}

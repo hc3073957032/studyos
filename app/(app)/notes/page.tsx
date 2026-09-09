@@ -20,12 +20,17 @@ export default async function NotesPage() {
         title="笔记"
         description="用自己的话重写刚学到的东西。"
         action={
-          <Link href="/notes/new">
-            <Button variant="primary">
-              <Plus className="size-4" aria-hidden />
-              新建笔记
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href="/notes/network">
+              <Button variant="secondary">知识网络</Button>
+            </Link>
+            <Link href="/notes/new">
+              <Button variant="primary">
+                <Plus className="size-4" aria-hidden />
+                新建笔记
+              </Button>
+            </Link>
+          </div>
         }
       />
 
@@ -42,7 +47,9 @@ export default async function NotesPage() {
           {notes.map((note) => (
             <div key={note.id} className="group flex items-start gap-4 px-4 py-4">
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-ink">{note.title}</p>
+                <Link href={`/notes/${note.id}`} className="text-sm font-semibold text-ink hover:text-accent">
+                  {note.title}
+                </Link>
                 <p className="mt-1 line-clamp-2 whitespace-pre-wrap text-sm leading-6 text-secondary">
                   {note.content || "没有正文"}
                 </p>
