@@ -7,6 +7,69 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum GoalType {
+  LONG_TERM
+  SEMESTER
+  SKILL
+}
+
+enum GoalStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum MaterialType {
+  PDF
+  PPT
+  DOC
+  WEB
+  VIDEO
+  IMAGE
+  TEXT
+}
+
+enum SessionType {
+  POMODORO
+  TIMER
+  COUNTDOWN
+}
+
+enum StudyPlanType {
+  TODAY
+  WEEK
+  MONTH
+  SEMESTER
+  TIMELINE
+}
+
+enum ReviewStatus {
+  NEW
+  LEARNING
+  REVIEWING
+  MASTERED
+}
+
+enum MistakeStatus {
+  ACTIVE
+  MASTERED
+  ARCHIVED
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -17,8 +80,22 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts Account[]
-  sessions Session[]
+  accounts        Account[]
+  sessions        Session[]
+  semesters       Semester[]
+  goals           Goal[]
+  courses         Course[]
+  chapters        Chapter[]
+  materials       CourseMaterial[]
+  plans           StudyPlan[]
+  tasks           Task[]
+  studySessions   StudySession[]
+  knowledge       Knowledge[]
+  notes           Note[]
+  reviews         Review[]
+  mistakes        Mistake[]
+  achievements    UserAchievement[]
+  notifications   Notification[]
 }
 
 model Account {
@@ -54,4 +131,334 @@ model VerificationToken {
   expires    DateTime
 
   @@id([identifier, token])
+}
+
+model Semester {
+  id          String    @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  isActive    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goals       Goal[]
+  courses     Course[]
+  tasks       Task[]
+  plans       StudyPlan[]
+
+  @@index([userId, isActive])
+}
+
+model Goal {
+  id          String     @id @default(cuid())
+  userId      String
+  type        GoalType   @default(LONG_TERM)
+  status      GoalStatus @default(ACTIVE)
+  title       String
+  description String?
+  targetMetric String?
+  progress    Int        @default(0)
+  dueDate     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  semesterId String?
+  semester   Semester?      @relation(fields: [semesterId], references: [id], onDelete: SetNull)
+  milestones GoalMilestone[]
+  tasks      Task[]
+
+  @@index([userId, status])
+}
+
+model GoalMilestone {
+  id          String    @id @default(cuid())
+  goalId      String
+  title       String
+  description String?
+  order       Int       @default(0)
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId, order])
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  color       String   @default("#006edb")
+  progress    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  semesterId     String?
+  semester       Semester?        @relation(fields: [semesterId], references: [id], onDelete: SetNull)
+  chapters       Chapter[]
+  materials      CourseMaterial[]
+  knowledge      Knowledge[]
+  notes          Note[]
+  tasks          Task[]
+  studySessions  StudySession[]
+  reviews        Review[]
+  mistakes       Mistake[]
+
+  @@index([userId])
+}
+
+model Chapter {
+  id          String   @id @default(cuid())
+  userId      String
+  courseId    String
+  title       String
+  description String?
+  order       Int      @default(0)
+  progress    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  materials      CourseMaterial[]
+  knowledge      Knowledge[]
+  notes          Note[]
+  tasks          Task[]
+  studySessions  StudySession[]
+  reviews        Review[]
+  mistakes       Mistake[]
+
+  @@index([userId])
+  @@index([courseId, order])
+}
+
+model CourseMaterial {
+  id          String       @id @default(cuid())
+  userId      String
+  name        String
+  type        MaterialType @default(TEXT)
+  url         String?
+  filePath    String?
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId    String?
+  course      Course?       @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  chapterId   String?
+  chapter     Chapter?      @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+
+  @@index([userId, type])
+}
+
+model StudyPlan {
+  id          String        @id @default(cuid())
+  userId      String
+  name        String
+  type        StudyPlanType @default(TODAY)
+  startDate   DateTime?
+  endDate     DateTime?
+  description String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  semesterId String?
+  semester   Semester? @relation(fields: [semesterId], references: [id], onDelete: SetNull)
+  tasks      Task[]
+
+  @@index([userId, type])
+}
+
+model Task {
+  id               String       @id @default(cuid())
+  userId           String
+  title            String
+  description      String?
+  status           TaskStatus   @default(TODO)
+  priority         TaskPriority @default(MEDIUM)
+  scheduledAt      DateTime?
+  dueDate          DateTime?
+  estimatedMinutes Int?
+  actualMinutes    Int?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  semesterId       String?
+  semester         Semester?        @relation(fields: [semesterId], references: [id], onDelete: SetNull)
+  goalId           String?
+  goal             Goal?            @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  courseId         String?
+  course           Course?          @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  chapterId        String?
+  chapter          Chapter?         @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  planId           String?
+  plan             StudyPlan?       @relation(fields: [planId], references: [id], onDelete: SetNull)
+  studySessions    StudySession[]
+  reviews          Review[]
+
+  @@index([userId, status])
+  @@index([userId, scheduledAt])
+}
+
+model StudySession {
+  id              String      @id @default(cuid())
+  userId          String
+  type            SessionType @default(POMODORO)
+  startAt         DateTime    @default(now())
+  endAt           DateTime?
+  durationSeconds Int?
+  note            String?
+  createdAt       DateTime    @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId    String?
+  course      Course?   @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  chapterId   String?
+  chapter     Chapter?  @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  taskId      String?
+  task        Task?     @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  @@index([userId, startAt])
+}
+
+model Knowledge {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  summary     String?
+  content     String?  @db.Text
+  mastery     Int      @default(0)
+  parentId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId     String?
+  course       Course?     @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  chapterId    String?
+  chapter      Chapter?    @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  parent       Knowledge?  @relation("KnowledgeTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children     Knowledge[] @relation("KnowledgeTree")
+  notes        Note[]
+  reviews      Review[]
+  mistakes     Mistake[]
+
+  @@index([userId])
+}
+
+model Note {
+  id           String   @id @default(cuid())
+  userId       String
+  title        String
+  content      String   @default("") @db.Text
+  tags         String[] @default([])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId     String?
+  course       Course?    @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  chapterId    String?
+  chapter      Chapter?   @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  knowledgeId  String?
+  knowledge    Knowledge? @relation(fields: [knowledgeId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}
+
+model Review {
+  id            String        @id @default(cuid())
+  userId        String
+  question      String
+  answer        String?       @db.Text
+  dueAt         DateTime      @default(now())
+  intervalDays  Int           @default(1)
+  status        ReviewStatus  @default(NEW)
+  reviewCount   Int           @default(0)
+  lastReviewedAt DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId     String?
+  course       Course?     @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  chapterId    String?
+  chapter      Chapter?    @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  knowledgeId  String?
+  knowledge    Knowledge?  @relation(fields: [knowledgeId], references: [id], onDelete: SetNull)
+  taskId       String?
+  task         Task?       @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  @@index([userId, dueAt])
+}
+
+model Mistake {
+  id             String        @id @default(cuid())
+  userId         String
+  question       String
+  myAnswer       String?
+  correctAnswer  String?       @db.Text
+  reason         String?
+  reviewCount    Int           @default(0)
+  status         MistakeStatus @default(ACTIVE)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId     String?
+  course       Course?     @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  chapterId    String?
+  chapter      Chapter?    @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  knowledgeId  String?
+  knowledge    Knowledge?  @relation(fields: [knowledgeId], references: [id], onDelete: SetNull)
+
+  @@index([userId, status])
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  title       String
+  description String?
+  icon        String?
+  createdAt   DateTime @default(now())
+
+  users UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  achievementId String
+  achievedAt    DateTime    @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  body      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
 }
