@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { FormField } from "@/components/form-field";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { ChapterSelect } from "@/components/chapter-select";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -54,8 +55,8 @@ export default async function NewMaterialPage() {
         <FormField label="链接" htmlFor="url">
           <Input id="url" name="url" type="url" placeholder="https://…" />
         </FormField>
-        <FormField label="章节 ID" htmlFor="chapterId" hint="可选，课程详情页可查看。">
-          <Input id="chapterId" name="chapterId" placeholder="可选" />
+        <FormField label="章节" htmlFor="chapterId">
+          <ChapterSelect courses={courses} />
         </FormField>
         <FormField label="备注" htmlFor="description">
           <Textarea id="description" name="description" placeholder="这份资料重点看哪里？" />

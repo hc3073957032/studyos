@@ -51,6 +51,22 @@ function enumValue<T extends string>(form: FormData, key: string, values: readon
   return values.includes(value as T) ? (value as T) : fallback;
 }
 
+
+async function resolveChapterContext(userId: string, formData: FormData) {
+  const courseId = nullableText(formData, "courseId");
+  const chapterId = nullableText(formData, "chapterId");
+  if (!chapterId) {
+    return { courseId, chapterId: null };
+  }
+  const chapter = await prisma.chapter.findFirst({
+    where: { id: chapterId, userId },
+    select: { id: true, courseId: true },
+  });
+  if (!chapter) {
+    throw new Error("章节不存在或无权访问");
+  }
+  return { courseId: chapter.courseId, chapterId: chapter.id };
+}
 async function requireUserId() {
   const userId = await getCurrentUserId();
   if (!userId) {
@@ -174,13 +190,13 @@ export async function deleteTaskAction(formData: FormData) {
 
 export async function createMaterialAction(formData: FormData) {
   const userId = await requireUserId();
+  const chapterContext = await resolveChapterContext(userId, formData);
   await materialMutations.create(userId, {
     name: formText(formData, "name"),
     type: enumValue(formData, "type", ["PDF", "PPT", "DOC", "WEB", "VIDEO", "IMAGE", "TEXT"], "WEB"),
     url: nullableText(formData, "url"),
     description: nullableText(formData, "description"),
-    courseId: nullableText(formData, "courseId"),
-    chapterId: nullableText(formData, "chapterId"),
+    courseId: chapterContext.courseId,    chapterId: chapterContext.chapterId,
   });
   revalidatePath("/materials");
   redirect("/materials");
@@ -200,12 +216,12 @@ export async function createNoteAction(formData: FormData) {
     .map((tag) => tag.trim())
     .filter(Boolean)
     .slice(0, 8);
+  const chapterContext = await resolveChapterContext(userId, formData);
   await noteMutations.create(userId, {
     title: formText(formData, "title"),
     content: formText(formData, "content"),
     tags,
-    courseId: nullableText(formData, "courseId"),
-    chapterId: nullableText(formData, "chapterId"),
+    courseId: chapterContext.courseId,    chapterId: chapterContext.chapterId,
     knowledgeId: nullableText(formData, "knowledgeId"),
   });
   revalidatePath("/notes");
@@ -221,12 +237,12 @@ export async function deleteNoteAction(formData: FormData) {
 
 export async function createKnowledgeAction(formData: FormData) {
   const userId = await requireUserId();
+  const chapterContext = await resolveChapterContext(userId, formData);
   await knowledgeMutations.create(userId, {
     title: formText(formData, "title"),
     summary: nullableText(formData, "summary"),
     content: nullableText(formData, "content"),
-    courseId: nullableText(formData, "courseId"),
-    chapterId: nullableText(formData, "chapterId"),
+    courseId: chapterContext.courseId,    chapterId: chapterContext.chapterId,
   });
   revalidatePath("/knowledge");
   redirect("/knowledge");
@@ -284,13 +300,13 @@ export async function deleteReviewAction(formData: FormData) {
 
 export async function createMistakeAction(formData: FormData) {
   const userId = await requireUserId();
+  const chapterContext = await resolveChapterContext(userId, formData);
   await mistakeMutations.create(userId, {
     question: formText(formData, "question"),
     myAnswer: nullableText(formData, "myAnswer"),
     correctAnswer: nullableText(formData, "correctAnswer"),
     reason: nullableText(formData, "reason"),
-    courseId: nullableText(formData, "courseId"),
-    chapterId: nullableText(formData, "chapterId"),
+    courseId: chapterContext.courseId,    chapterId: chapterContext.chapterId,
     knowledgeId: nullableText(formData, "knowledgeId"),
   });
   revalidatePath("/reviews/mistakes");
@@ -306,10 +322,10 @@ export async function setMistakeStatusAction(formData: FormData) {
 
 export async function startFocusAction(formData: FormData) {
   const userId = await requireUserId();
+  const chapterContext = await resolveChapterContext(userId, formData);
   const session = await focusMutations.start(userId, {
     type: enumValue(formData, "type", ["POMODORO", "TIMER", "COUNTDOWN"], "POMODORO"),
-    courseId: nullableText(formData, "courseId"),
-    chapterId: nullableText(formData, "chapterId"),
+    courseId: chapterContext.courseId,    chapterId: chapterContext.chapterId,
     taskId: nullableText(formData, "taskId"),
   });
   revalidatePath("/focus");

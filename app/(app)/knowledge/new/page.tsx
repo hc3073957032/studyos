@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { FormField } from "@/components/form-field";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { ChapterSelect } from "@/components/chapter-select";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -45,8 +46,8 @@ export default async function NewKnowledgePage() {
               ))}
             </Select>
           </FormField>
-          <FormField label="章节 ID" htmlFor="chapterId" hint="在课程详情页可查看章节 ID。">
-            <Input id="chapterId" name="chapterId" placeholder="可选" />
+          <FormField label="章节" htmlFor="chapterId">
+            <ChapterSelect courses={courses} />
           </FormField>
         </div>
         <div className="flex gap-2">

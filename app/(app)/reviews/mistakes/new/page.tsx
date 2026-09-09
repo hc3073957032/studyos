@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { FormField } from "@/components/form-field";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { ChapterSelect } from "@/components/chapter-select";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -66,7 +67,7 @@ export default async function NewMistakePage() {
             </Select>
           </FormField>
           <FormField label="章节" htmlFor="chapterId">
-            <Input id="chapterId" name="chapterId" placeholder="章节 ID（可选）" />
+            <ChapterSelect courses={courses} />
           </FormField>
         </div>
         <div className="flex gap-2">
