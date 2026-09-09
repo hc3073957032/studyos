@@ -200,7 +200,7 @@ export async function listKnowledge(userId: string) {
   return prisma.knowledge.findMany({
     where: { userId },
     include: {
-      course: { select: { id: true, name: true } },
+      course: { select: { id: true, name: true, color: true } },
       chapter: { select: { id: true, title: true } },
       _count: { select: { notes: true, reviews: true } },
     },
@@ -395,4 +395,19 @@ export async function buildKnowledgeNetwork(userId: string, maxNotes = 160) {
   }
 
   return { nodes, links };
+}
+export async function getKnowledge(userId: string, id: string) {
+  return prisma.knowledge.findFirst({
+    where: { id, userId },
+    include: {
+      course: { select: { id: true, name: true, color: true } },
+      chapter: { select: { id: true, title: true } },
+      notes: {
+        orderBy: { updatedAt: "desc" },
+        take: 12,
+        select: { id: true, title: true, tags: true },
+      },
+      reviews: { take: 5, select: { id: true, question: true, dueAt: true } },
+    },
+  });
 }
