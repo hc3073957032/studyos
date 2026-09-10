@@ -26,7 +26,7 @@ export async function getDashboardData(userId: string) {
       prisma.task.findMany({
         where: {
           userId,
-          status: { in: ["TODO", "IN_PROGRESS"] },
+          status: { in: ["TODO", "IN_PROGRESS", "COMPLETED"] },
           OR: [
             { scheduledAt: { gte: dayStart, lte: dayEnd } },
             { dueDate: { gte: dayStart, lte: dayEnd } },
@@ -437,6 +437,8 @@ export async function getUserSettings(userId: string) {
       wallpaperUrl: null,
       wallpaperOpacity: 80,
       wallpaperBlur: 0,
+      sidebarAutoHide: false,
+      sidebarHideDelay: 60,
       createdAt: new Date(),
       updatedAt: new Date(),
     }

@@ -5,6 +5,7 @@ import { FormField } from "@/components/form-field";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {
   removeWallpaperAction,
   updateDisplaySettingsAction,
@@ -98,6 +99,27 @@ export default async function SettingsPage({
                     {item.label}
                   </label>
                 ))}
+              </div>
+
+              <div className="mt-6 space-y-4 border-t border-line pt-5">
+                <label className="flex items-center gap-2 text-sm text-ink">
+                  <input
+                    type="checkbox"
+                    name="sidebarAutoHide"
+                    defaultChecked={settings.sidebarAutoHide}
+                    className="size-4 accent-accent"
+                  />
+                  长时间不操作时自动隐藏侧边栏
+                </label>
+                <label className="flex max-w-xs items-center justify-between gap-4 text-sm text-ink">
+                  隐藏等待时间
+                  <Select name="sidebarHideDelay" defaultValue={String(settings.sidebarHideDelay)} className="w-32">
+                    <option value="30">30 秒</option>
+                    <option value="60">1 分钟</option>
+                    <option value="120">2 分钟</option>
+                    <option value="300">5 分钟</option>
+                  </Select>
+                </label>
               </div>
 
               <div className="mt-6 grid gap-5 border-t border-line pt-5 sm:grid-cols-2">

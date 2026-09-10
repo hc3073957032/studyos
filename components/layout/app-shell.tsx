@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -87,6 +88,8 @@ export function AppShell({
   wallpaperUrl,
   wallpaperOpacity,
   wallpaperBlur,
+  sidebarAutoHide,
+  sidebarHideDelay,
 }: {
   user: { name: string; email: string };
   children: React.ReactNode;
@@ -94,8 +97,38 @@ export function AppShell({
   wallpaperUrl: string | null;
   wallpaperOpacity: number;
   wallpaperBlur: number;
+  sidebarAutoHide: boolean;
+  sidebarHideDelay: number;
 }) {
   const pathname = usePathname();
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+
+  useEffect(() => {
+    if (!sidebarAutoHide) {
+      return;
+    }
+    let timeout = window.setTimeout(
+      () => setSidebarVisible(false),
+      sidebarHideDelay * 1000,
+    );
+    const reset = () => {
+      window.clearTimeout(timeout);
+      timeout = window.setTimeout(
+        () => setSidebarVisible(false),
+        sidebarHideDelay * 1000,
+      );
+    };
+
+    window.addEventListener("mousemove", reset);
+    window.addEventListener("keydown", reset);
+    window.addEventListener("pointerdown", reset);
+    return () => {
+      window.clearTimeout(timeout);
+      window.removeEventListener("mousemove", reset);
+      window.removeEventListener("keydown", reset);
+      window.removeEventListener("pointerdown", reset);
+    };
+  }, [sidebarAutoHide, sidebarHideDelay]);
   const visibleMain = mainNavigation.filter((item) => visibleSidebarItems.includes(item.id));
   const visibleResources = resourceNavigation.filter((item) => visibleSidebarItems.includes(item.id));
   const isActive = (href: string) =>
@@ -120,7 +153,19 @@ export function AppShell({
           />
         </>
       ) : null}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-line/70 bg-surface/85 backdrop-blur-2xl md:flex">
+      {sidebarAutoHide ? (
+        <div
+          className="fixed inset-y-0 left-0 z-40 hidden w-3 md:block"
+          onMouseEnter={() => setSidebarVisible(true)}
+          aria-hidden
+        />
+      ) : null}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-line/70 bg-surface/85 backdrop-blur-2xl transition-transform duration-300 ease-out md:flex",
+          sidebarAutoHide && !sidebarVisible ? "-translate-x-full" : "translate-x-0",
+        )}
+      >
         <Brand />
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <p className="px-3 pb-2 text-[11px] font-medium uppercase tracking-normal text-secondary/70">
@@ -167,7 +212,7 @@ export function AppShell({
         </div>
       </aside>
 
-      <div className="relative z-10 md:pl-60">
+      <div className={cn("relative z-10 transition-[padding] duration-300 ease-out", sidebarAutoHide && !sidebarVisible ? "md:pl-0" : "md:pl-60")}>
         <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-line/70 bg-canvas/70 px-4 backdrop-blur-xl md:px-6">
           <div className="flex items-center gap-2 md:hidden">
             <Brand />

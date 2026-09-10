@@ -1,10 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight, Check, Circle, Play, Target, BookOpen } from "lucide-react";
+import { ArrowRight, Check, Circle, Play } from "lucide-react";
 
-import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { setTaskStatusAction } from "@/lib/actions/studyos";
 import { formatMinutes } from "@/lib/utils";
@@ -20,7 +18,10 @@ function greeting(date: Date) {
 
 function formatTaskTime(date: Date | null) {
   if (!date) return null;
-  return new Intl.DateTimeFormat("zh-CN", { hour: "2-digit", minute: "2-digit" }).format(date);
+  return new Intl.DateTimeFormat("zh-CN", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
 }
 
 export default async function DashboardPage() {
@@ -29,136 +30,200 @@ export default async function DashboardPage() {
 
   const data = await getDashboardData(userId);
   const now = new Date();
-  const remainingTasks = data.todayTasks.filter((task) => task.status !== "COMPLETED");
+  const activeTasks = data.todayTasks.filter(
+    (task) => task.status !== "COMPLETED",
+  );
+  const completedToday = data.todayTasks.filter(
+    (task) => task.status === "COMPLETED",
+  );
+  const totalToday = data.todayTasks.length;
+  const progress = totalToday > 0 ? Math.round((completedToday.length / totalToday) * 100) : 0;
+  const plannedMinutes = activeTasks.reduce(
+    (sum, task) => sum + (task.estimatedMinutes ?? 0),
+    0,
+  );
+  const radius = 70;
+  const circumference = 2 * Math.PI * radius;
 
   return (
     <>
-      <PageHeader
-        title={`${greeting(now)}，今天要学点什么`}
-        description={new Intl.DateTimeFormat("zh-CN", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          weekday: "long",
-        }).format(now)}
-      />
-
-      <dl className="grid grid-cols-1 overflow-hidden rounded-md border border-line bg-surface sm:grid-cols-3">
-        <div className="border-b border-line p-5 sm:border-b-0 sm:border-r">
-          <dt className="text-xs text-secondary">今日任务</dt>
-          <dd className="mt-2 text-2xl font-semibold text-ink">
-            {remainingTasks.length}
-            <span className="ml-1 text-sm font-normal text-secondary">个待完成</span>
-          </dd>
-        </div>
-        <div className="border-b border-line p-5 sm:border-b-0 sm:border-r">
-          <dt className="text-xs text-secondary">预计专注</dt>
-          <dd className="mt-2 text-2xl font-semibold text-ink">
-            {formatMinutes(data.plannedMinutes)}
-          </dd>
-        </div>
-        <div className="p-5">
-          <dt className="text-xs text-secondary">连续学习</dt>
-          <dd className="mt-2 text-2xl font-semibold text-ink">
-            {data.streak}
-            <span className="ml-1 text-sm font-normal text-secondary">天</span>
-          </dd>
-        </div>
-      </dl>
-
-      <section className="mt-8">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-ink">今天</h2>
-          <Link href="/tasks" className="text-sm text-accent hover:text-accent/80">
-            查看全部
-          </Link>
-        </div>
-
-        {remainingTasks.length === 0 ? (
-          <EmptyState
-            icon={Check}
-            title="今天的任务已经清空"
-            description="可以去计划页安排下一项学习，或者开始一段专注。"
-            actionLabel="安排任务"
-          />
-        ) : (
-          <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
-            {remainingTasks.map((task) => (
-              <div key={task.id} className="flex items-center gap-3 px-4 py-3">
-                <form action={setTaskStatusAction}>
-                  <input type="hidden" name="id" value={task.id} />
-                  <input type="hidden" name="status" value="COMPLETED" />
-                  <button
-                    type="submit"
-                    title="完成任务"
-                    className="flex size-5 shrink-0 items-center justify-center rounded-full border border-line text-secondary transition-colors hover:border-accent hover:text-accent"
-                  >
-                    <Circle className="size-3" aria-hidden />
-                  </button>
-                </form>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-ink">{task.title}</p>
-                  <p className="mt-0.5 truncate text-xs text-secondary">
-                    {task.course?.name ?? task.goal?.title ?? "未关联课程"}
-                    {task.estimatedMinutes ? ` · ${formatMinutes(task.estimatedMinutes)}` : ""}
-                  </p>
-                </div>
-                <div className="flex shrink-0 items-center gap-3">
-                  {formatTaskTime(task.scheduledAt) ? (
-                    <span className="text-xs tabular-nums text-secondary">{formatTaskTime(task.scheduledAt)}</span>
-                  ) : null}
-                  <Link
-                    href={`/focus?taskId=${task.id}`}
-                    className="flex size-8 items-center justify-center text-secondary transition-colors hover:bg-subtle hover:text-accent"
-                    title="开始专注"
-                  >
-                    <Play className="size-4" aria-hidden />
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+      <header className="mb-10">
+        <p className="text-sm text-secondary">
+          {new Intl.DateTimeFormat("zh-CN", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            weekday: "long",
+          }).format(now)}
+        </p>
+        <h1 className="mt-3 text-4xl font-semibold tracking-normal text-ink">
+          {greeting(now)}
+        </h1>
+        <p className="mt-3 max-w-xl text-[15px] leading-7 text-secondary">
+          今天还剩 {activeTasks.length} 个任务，预计需要 {formatMinutes(plannedMinutes)}。
+        </p>
+      </header>
 
       {data.activeSession ? (
-        <section className="mt-6 border border-success/20 bg-success/10 px-4 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="size-2 rounded-full bg-success" aria-hidden />
-              <div>
-                <p className="text-sm font-medium text-ink">专注正在进行</p>
-                <p className="text-xs text-secondary">
-                  {data.activeSession.course?.name ?? "自由学习"}
-                </p>
-              </div>
+        <Link
+          href="/focus"
+          className="mb-8 flex items-center justify-between border-y border-line/70 py-4 transition-colors hover:bg-subtle/40"
+        >
+          <div className="flex items-center gap-3">
+            <span className="size-2 rounded-full bg-success" aria-hidden />
+            <div>
+              <p className="text-sm font-medium text-ink">专注正在进行</p>
+              <p className="mt-0.5 text-xs text-secondary">
+                {data.activeSession.course?.name ?? "自由学习"}
+              </p>
             </div>
-            <Link href="/focus" className="text-sm font-medium text-success hover:text-success/80">
-              继续
-            </Link>
           </div>
-        </section>
+          <ArrowRight className="size-4 text-secondary" aria-hidden />
+        </Link>
       ) : null}
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-12 lg:grid-cols-[1fr_260px]">
         <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
-              <BookOpen className="size-4 text-secondary" aria-hidden />
-              最近学习
-            </h2>
-            <Link href="/courses" className="text-sm text-accent hover:text-accent/80">
-              课程
+          <div className="mb-3 flex items-end justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-ink">今天</h2>
+              <p className="mt-1 text-xs text-secondary">
+                {formatMinutes(plannedMinutes)} 预计专注
+              </p>
+            </div>
+            <Link href="/tasks" className="text-sm text-secondary transition-colors hover:text-ink">
+              管理任务
+            </Link>
+          </div>
+
+          {activeTasks.length === 0 && completedToday.length === 0 ? (
+            <EmptyState
+              icon={Check}
+              title="今天还没有安排"
+              description="给自己安排一件 20-30 分钟就能完成的事。"
+              actionLabel="添加任务"
+              actionHref="/tasks/new"
+            />
+          ) : (
+            <div className="divide-y divide-line/70">
+              {activeTasks.map((task) => (
+                <div
+                  key={task.id}
+                  className="group flex items-center gap-4 py-4 transition-colors hover:bg-subtle/35"
+                >
+                  <form action={setTaskStatusAction}>
+                    <input type="hidden" name="id" value={task.id} />
+                    <input type="hidden" name="status" value="COMPLETED" />
+                    <button
+                      type="submit"
+                      title="完成任务"
+                      className="flex size-7 shrink-0 items-center justify-center rounded-full border border-line text-secondary transition-all duration-200 hover:border-accent hover:text-accent"
+                    >
+                      <Circle className="size-3.5" aria-hidden />
+                    </button>
+                  </form>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[15px] font-medium text-ink">{task.title}</p>
+                    <p className="mt-1 truncate text-xs text-secondary">
+                      {task.course?.name ?? task.goal?.title ?? "未分类"}
+                      {task.estimatedMinutes ? ` · ${formatMinutes(task.estimatedMinutes)}` : ""}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    {formatTaskTime(task.scheduledAt) ? (
+                      <span className="text-xs tabular-nums text-secondary/80">
+                        {formatTaskTime(task.scheduledAt)}
+                      </span>
+                    ) : null}
+                    <Link
+                      href={`/focus?taskId=${task.id}`}
+                      className="flex size-8 items-center justify-center rounded-full text-secondary opacity-0 transition-all duration-200 hover:bg-subtle hover:text-accent group-hover:opacity-100"
+                      title="开始专注"
+                    >
+                      <Play className="size-3.5" aria-hidden />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+              {completedToday.length > 0 ? (
+                <div className="pt-4 text-xs text-secondary">
+                  今天已完成 {completedToday.length} 项
+                </div>
+              ) : null}
+            </div>
+          )}
+        </section>
+
+        <aside className="flex flex-col items-center lg:items-start">
+          <div className="relative size-52">
+            <svg viewBox="0 0 160 160" className="size-full -rotate-90">
+              <circle
+                cx="80"
+                cy="80"
+                r={radius}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="6"
+                className="text-line"
+              />
+              <circle
+                cx="80"
+                cy="80"
+                r={radius}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="6"
+                strokeLinecap="round"
+                strokeDasharray={circumference}
+                strokeDashoffset={circumference * (1 - progress / 100)}
+                className="text-accent transition-[stroke-dashoffset] duration-700 ease-out"
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-4xl font-semibold tabular-nums text-ink">{progress}%</span>
+              <span className="mt-1 text-xs text-secondary">今日进度</span>
+            </div>
+          </div>
+
+          <dl className="mt-6 grid w-full grid-cols-2 gap-x-8 gap-y-5">
+            <div>
+              <dt className="text-xs text-secondary">本周专注</dt>
+              <dd className="mt-1 text-lg font-semibold text-ink">{formatMinutes(data.weekMinutes)}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-secondary">连续学习</dt>
+              <dd className="mt-1 text-lg font-semibold text-ink">{data.streak} 天</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-secondary">本月专注</dt>
+              <dd className="mt-1 text-lg font-semibold text-ink">{formatMinutes(data.monthMinutes)}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-secondary">待办总数</dt>
+              <dd className="mt-1 text-lg font-semibold text-ink">{data.activeTaskCount}</dd>
+            </div>
+          </dl>
+        </aside>
+      </div>
+
+      <div className="mt-14 grid gap-10 border-t border-line/70 pt-8 lg:grid-cols-2">
+        <section>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-base font-semibold text-ink">继续学习</h2>
+            <Link href="/courses" className="text-xs text-secondary hover:text-ink">
+              全部课程
             </Link>
           </div>
           {data.courses.length === 0 ? (
-            <EmptyState icon={BookOpen} title="还没有课程" description="创建课程后会在这里显示学习进度。" />
+            <p className="py-5 text-sm text-secondary">还没有课程。</p>
           ) : (
-            <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
+            <div className="space-y-5">
               {data.courses.map((course) => (
-                <Link key={course.id} href={`/courses/${course.id}`} className="block px-4 py-3 hover:bg-subtle/60">
+                <Link key={course.id} href={`/courses/${course.id}`} className="block group">
                   <div className="flex items-center justify-between gap-4">
-                    <p className="truncate text-sm font-medium text-ink">{course.name}</p>
+                    <p className="truncate text-sm font-medium text-ink transition-colors group-hover:text-accent">
+                      {course.name}
+                    </p>
                     <span className="text-xs tabular-nums text-secondary">{course.progress}%</span>
                   </div>
                   <Progress value={course.progress} className="mt-2" />
@@ -169,40 +234,34 @@ export default async function DashboardPage() {
         </section>
 
         <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
-              <Target className="size-4 text-secondary" aria-hidden />
-              进行中的目标
-            </h2>
-            <Link href="/goals" className="text-sm text-accent hover:text-accent/80">
-              目标
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-base font-semibold text-ink">目标</h2>
+            <Link href="/goals" className="text-xs text-secondary hover:text-ink">
+              全部目标
             </Link>
           </div>
           {data.goals.length === 0 ? (
-            <EmptyState icon={Target} title="还没有目标" description="先写下一个长期目标，学习路径会更清楚。" />
+            <p className="py-5 text-sm text-secondary">还没有目标。</p>
           ) : (
-            <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
+            <div className="divide-y divide-line/70">
               {data.goals.map((goal) => (
-                <Link key={goal.id} href={`/goals/${goal.id}`} className="block px-4 py-3 hover:bg-subtle/60">
-                  <div className="flex items-center justify-between gap-4">
+                <Link
+                  key={goal.id}
+                  href={`/goals/${goal.id}`}
+                  className="flex items-center justify-between gap-4 py-3 transition-colors hover:bg-subtle/35"
+                >
+                  <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-ink">{goal.title}</p>
-                    <Badge variant={goal.type === "LONG_TERM" ? "accent" : "neutral"}>
-                      {goal.type === "LONG_TERM" ? "长期" : goal.type === "SEMESTER" ? "学期" : "技能"}
-                    </Badge>
+                    <p className="mt-0.5 text-xs text-secondary">
+                      {goal.type === "LONG_TERM" ? "长期目标" : goal.type === "SEMESTER" ? "学期目标" : "技能目标"}
+                    </p>
                   </div>
-                  <Progress value={goal.progress} className="mt-2" />
+                  <span className="text-xs tabular-nums text-secondary">{goal.progress}%</span>
                 </Link>
               ))}
             </div>
           )}
         </section>
-      </div>
-
-      <div className="mt-6">
-        <Link href="/tasks" className="inline-flex items-center gap-2 text-sm text-accent hover:text-accent/80">
-          <ArrowRight className="size-4" aria-hidden />
-          打开今日计划
-        </Link>
       </div>
     </>
   );

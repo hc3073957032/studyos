@@ -470,6 +470,8 @@ model UserSettings {
   wallpaperUrl     String?
   wallpaperOpacity Int      @default(80)
   wallpaperBlur    Int      @default(0)
+  sidebarAutoHide  Boolean  @default(false)
+  sidebarHideDelay Int      @default(60)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 

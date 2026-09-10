@@ -46,15 +46,29 @@ export async function updateDisplaySettingsAction(formData: FormData) {
     0,
     20,
   );
+  const sidebarAutoHide = formData.get("sidebarAutoHide") === "on";
+  const sidebarHideDelay = clampSetting(
+    Number(formData.get("sidebarHideDelay") ?? 60),
+    15,
+    300,
+  );
 
   await prisma.userSettings.upsert({
     where: { userId },
-    update: { sidebarItems: selected, wallpaperOpacity, wallpaperBlur },
+    update: {
+      sidebarItems: selected,
+      wallpaperOpacity,
+      wallpaperBlur,
+      sidebarAutoHide,
+      sidebarHideDelay,
+    },
     create: {
       userId,
       sidebarItems: selected,
       wallpaperOpacity,
       wallpaperBlur,
+      sidebarAutoHide,
+      sidebarHideDelay,
     },
   });
 

@@ -27,6 +27,8 @@ export default async function AppLayout({
       wallpaperUrl={settings.wallpaperUrl}
       wallpaperOpacity={settings.wallpaperOpacity}
       wallpaperBlur={settings.wallpaperBlur}
+      sidebarAutoHide={settings.sidebarAutoHide}
+      sidebarHideDelay={settings.sidebarHideDelay}
     >
       {children}
     </AppShell>
