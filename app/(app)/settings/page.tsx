@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { ImagePlus, LogOut, Palette, SlidersHorizontal, Trash2, UserRound } from "lucide-react";
+import { ImagePlus, Palette, SlidersHorizontal, Trash2, UserRound } from "lucide-react";
 
 import { FormField } from "@/components/form-field";
 import { PageHeader } from "@/components/page-header";
@@ -11,7 +11,6 @@ import {
   updateDisplaySettingsAction,
   uploadWallpaperAction,
 } from "@/lib/actions/settings";
-import { signOutAction } from "@/lib/actions/session";
 import { updateProfileAction } from "@/lib/actions/studyos";
 import { getCurrentUserId, getUserProfile, getUserSettings } from "@/lib/services/studyos";
 
@@ -239,12 +238,9 @@ export default async function SettingsPage({
             </dl>
           </div>
 
-          <form action={signOutAction}>
-            <Button type="submit" variant="outline" className="w-full">
-              <LogOut className="size-4" aria-hidden />
-              退出登录
-            </Button>
-          </form>
+          <div className="border border-line bg-surface px-4 py-3 text-center text-xs text-secondary">
+            本地模式 · 数据只保存在这台设备
+          </div>
         </aside>
       </div>
     </>

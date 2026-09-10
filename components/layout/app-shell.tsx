@@ -13,7 +13,6 @@ import {
   GraduationCap,
   Home,
   Library,
-  LogOut,
   NotebookPen,
   RefreshCcw,
   Search,
@@ -22,9 +21,7 @@ import {
   Timer,
 } from "lucide-react";
 
-import { signOutAction } from "@/lib/actions/session";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 const mainNavigation = [
   { id: "dashboard", href: "/dashboard", label: "首页", icon: Home },
@@ -203,11 +200,7 @@ export function AppShell({
               <p className="truncate text-sm font-medium text-ink">{user.name}</p>
               <p className="truncate text-xs text-secondary">{user.email}</p>
             </div>
-            <form action={signOutAction}>
-              <Button type="submit" variant="ghost" size="icon" title="退出登录">
-                <LogOut className="size-4" aria-hidden />
-              </Button>
-            </form>
+            <span className="rounded-full bg-subtle px-2 py-1 text-[10px] text-secondary">本地</span>
           </div>
         </div>
       </aside>

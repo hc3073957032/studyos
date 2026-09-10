@@ -1,4 +1,3 @@
-import { auth } from "@/lib/auth";
 import {
   addDays,
   calculateStreak,
@@ -9,9 +8,25 @@ import {
 } from "@/lib/algorithms/study";
 import { prisma } from "@/lib/db";
 
+let cachedLocalUserId: string | null = null;
+
 export async function getCurrentUserId(): Promise<string | null> {
-  const session = await auth();
-  return session?.user?.id ?? null;
+  if (cachedLocalUserId) {
+    return cachedLocalUserId;
+  }
+
+  const user = await prisma.user.upsert({
+    where: { email: "local@studyos.app" },
+    update: {},
+    create: {
+      name: "学习者",
+      email: "local@studyos.app",
+    },
+    select: { id: true },
+  });
+
+  cachedLocalUserId = user.id;
+  return user.id;
 }
 
 export async function getDashboardData(userId: string) {

@@ -1,27 +1,27 @@
-import { redirect } from "next/navigation";
+export const dynamic = "force-dynamic";
 
 import { AppShell } from "@/components/layout/app-shell";
-import { auth } from "@/lib/auth";
-import { DEFAULT_SIDEBAR_ITEMS, getUserSettings } from "@/lib/services/studyos";
+import {
+  DEFAULT_SIDEBAR_ITEMS,
+  getCurrentUserId,
+  getUserProfile,
+  getUserSettings,
+} from "@/lib/services/studyos";
 
 export default async function AppLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
-  const settings = await getUserSettings(session.user.id);
+  const userId = await getCurrentUserId();
+  const settings = await getUserSettings(userId!);
+  const profile = await getUserProfile(userId!);
 
   return (
     <AppShell
       user={{
-        name: session.user.name ?? "学习者",
-        email: session.user.email ?? "",
+        name: profile?.name ?? "学习者",
+        email: "本地数据",
       }}
       visibleSidebarItems={settings.sidebarItems ?? DEFAULT_SIDEBAR_ITEMS}
       wallpaperUrl={settings.wallpaperUrl}

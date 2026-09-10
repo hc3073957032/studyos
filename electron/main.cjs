@@ -2,6 +2,7 @@ const { app, BrowserWindow, dialog } = require("electron");
 const { spawn, spawnSync } = require("node:child_process");
 const crypto = require("node:crypto");
 const {
+  appendFileSync,
   cpSync,
   existsSync,
   mkdirSync,
@@ -22,6 +23,12 @@ const userData = app.getPath("userData");
 const binaryDir = path.join(os.homedir(), ".studyos-app-postgres-bin");
 const dataDir = path.join(os.homedir(), ".studyos-app-postgres");
 const uploadDir = path.join(os.homedir(), ".studyos-app-uploads");
+const logFile = path.join(os.homedir(), ".studyos-app.log");
+const databaseUrl = `postgresql://postgres:password@127.0.0.1:${DB_PORT}/studyos?schema=public`;
+
+function log(message) {
+  appendFileSync(logFile, `[${new Date().toISOString()}] ${message}\n`, "utf8");
+}
 const sourceNative = path.join(
   appRoot,
   "node_modules",
@@ -152,6 +159,28 @@ async function waitForDatabase() {
   throw new Error("PostgreSQL 启动超时");
 }
 
+async function migrateDatabase() {
+  const prismaCli = path.join(appRoot, "node_modules", "prisma", "build", "index.js");
+  const result = spawnSync(
+    process.execPath,
+    [prismaCli, "migrate", "deploy"],
+    {
+      cwd: appRoot,
+      env: {
+        ...process.env,
+        ELECTRON_RUN_AS_NODE: "1",
+        DATABASE_URL: databaseUrl,
+      },
+      encoding: "utf8",
+    },
+  );
+  if (result.stdout) log(`[prisma] ${result.stdout}`);
+  if (result.stderr) log(`[prisma:error] ${result.stderr}`);
+  if (result.status !== 0) {
+    throw new Error(`数据库迁移失败: ${result.stderr || result.stdout}`);
+  }
+}
+
 function startWebServer() {
   mkdirSync(uploadDir, { recursive: true });
   const nextBin = path.join(appRoot, "node_modules", "next", "dist", "bin", "next");
@@ -164,14 +193,17 @@ function startWebServer() {
         ...process.env,
         ELECTRON_RUN_AS_NODE: "1",
         NODE_ENV: "production",
-        DATABASE_URL: `postgresql://postgres:password@127.0.0.1:${DB_PORT}/studyos?schema=public`,
+        DATABASE_URL: databaseUrl,
         AUTH_SECRET: secretValue(),
         AUTH_URL: `http://localhost:${WEB_PORT}`,
         STUDYOS_UPLOAD_DIR: uploadDir,
       },
-      stdio: "ignore",
+      stdio: ["ignore", "pipe", "pipe"],
     },
   );
+  webProcess.stdout?.on("data", (data) => log(`[web] ${data.toString()}`));
+  webProcess.stderr?.on("data", (data) => log(`[web:error] ${data.toString()}`));
+  webProcess.on("exit", (code) => log(`[web] exited ${code}`));
 }
 
 function waitForWeb() {
@@ -202,17 +234,19 @@ function waitForWeb() {
 }
 
 async function boot() {
-  console.log("[StudyOS] preparing database binaries");
+  log("[StudyOS] preparing database binaries");
   prepareDatabaseBinaries();
-  console.log("[StudyOS] initialising database");
+  log("[StudyOS] initialising database");
   initialiseDatabase();
-  console.log("[StudyOS] waiting for database");
+  log("[StudyOS] waiting for database");
   await waitForDatabase();
-  console.log("[StudyOS] starting web server");
+  log("[StudyOS] applying database migrations");
+  await migrateDatabase();
+  log("[StudyOS] starting web server");
   startWebServer();
-  console.log("[StudyOS] waiting for web server");
+  log("[StudyOS] waiting for web server");
   await waitForWeb();
-  console.log("[StudyOS] boot complete");
+  log("[StudyOS] boot complete");
 }
 
 function createWindow() {
@@ -254,7 +288,7 @@ if (!hasLock) {
       await boot();
       await mainWindow.loadURL(`http://localhost:${WEB_PORT}/dashboard`);
     } catch (error) {
-      console.error("[StudyOS] boot failed", error);
+      log(`[StudyOS] boot failed ${error instanceof Error ? error.stack : String(error)}`);
       dialog.showErrorBox(
         "StudyOS 启动失败",
         error instanceof Error ? error.message : String(error),

@@ -27,6 +27,7 @@
         "next": "^16.3.4",
         "next-auth": "^5.0.0-beta.32",
         "pg": "^8.23.0",
+        "prisma": "^6.19.3",
         "react": "^19.2.8",
         "react-dom": "^19.2.8",
         "tailwind-merge": "^3.3.1",
@@ -43,7 +44,6 @@
         "eslint": "^9.0.0",
         "eslint-config-next": "^16.3.4",
         "postcss": "^8.5.0",
-        "prisma": "^6.19.3",
         "tailwindcss": "^4.3.3",
         "typescript": "^5.9.3",
         "vitest": "^5.0.0"
@@ -72,7 +72,25 @@
         },
         "portable": {
             "artifactName": "StudyOS-${version}.exe"
-        }
+        },
+        "extraResources": [
+            {
+                "from": "node_modules/.prisma",
+                "to": "app/node_modules/.prisma"
+            },
+            {
+                "from": ".next/node_modules",
+                "to": "app/.next/node_modules"
+            },
+            {
+                "from": "node_modules/prisma",
+                "to": "app/node_modules/prisma"
+            },
+            {
+                "from": "node_modules/@prisma",
+                "to": "app/node_modules/@prisma"
+            }
+        ]
     },
     "description": "Personal Learning OS desktop app",
     "author": "hc3073957032"
