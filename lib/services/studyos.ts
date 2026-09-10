@@ -411,3 +411,34 @@ export async function getKnowledge(userId: string, id: string) {
     },
   });
 }
+export const DEFAULT_SIDEBAR_ITEMS = [
+  "dashboard",
+  "goals",
+  "courses",
+  "tasks",
+  "focus",
+  "reviews",
+  "plans",
+  "knowledge",
+  "notes",
+  "analytics",
+  "settings",
+];
+
+export async function getUserSettings(userId: string) {
+  const settings = await prisma.userSettings.findUnique({
+    where: { userId },
+  });
+  return (
+    settings ?? {
+      id: "default",
+      userId,
+      sidebarItems: DEFAULT_SIDEBAR_ITEMS,
+      wallpaperUrl: null,
+      wallpaperOpacity: 80,
+      wallpaperBlur: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+  );
+}

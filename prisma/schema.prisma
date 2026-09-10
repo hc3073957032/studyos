@@ -96,6 +96,7 @@ model User {
   mistakes        Mistake[]
   achievements    UserAchievement[]
   notifications   Notification[]
+  settings        UserSettings?
 }
 
 model Account {
@@ -461,4 +462,16 @@ model Notification {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, readAt])
+}
+model UserSettings {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  sidebarItems     String[] @default(["dashboard", "goals", "courses", "tasks", "focus", "reviews", "plans", "knowledge", "notes", "analytics", "settings"])
+  wallpaperUrl     String?
+  wallpaperOpacity Int      @default(80)
+  wallpaperBlur    Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

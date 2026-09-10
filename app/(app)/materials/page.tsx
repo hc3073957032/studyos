@@ -5,6 +5,7 @@ import { FolderOpen, Plus, Trash2 } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
+import { KnowledgeTabs } from "@/components/knowledge-tabs";
 import { Button } from "@/components/ui/button";
 import { deleteMaterialAction } from "@/lib/actions/studyos";
 import { getCurrentUserId, listMaterials } from "@/lib/services/studyos";
@@ -26,9 +27,10 @@ export default async function MaterialsPage() {
 
   return (
     <>
+      <KnowledgeTabs active="/materials" />
       <PageHeader
-        title="资料"
-        description="课程相关的 PDF、网页、视频与文档。"
+        title="资料架"
+        description="外部来源：PDF、网页、视频和文档。"
         action={
           <Link href="/materials/new">
             <Button variant="primary">

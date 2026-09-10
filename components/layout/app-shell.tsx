@@ -26,22 +26,22 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const mainNavigation = [
-  { href: "/dashboard", label: "首页", icon: Home },
-  { href: "/goals", label: "目标", icon: Target },
-  { href: "/courses", label: "课程", icon: BookOpen },
-  { href: "/tasks", label: "任务", icon: CheckSquare },
-  { href: "/focus", label: "专注", icon: Timer },
-  { href: "/reviews", label: "复习", icon: RefreshCcw },
+  { id: "dashboard", href: "/dashboard", label: "首页", icon: Home },
+  { id: "goals", href: "/goals", label: "目标", icon: Target },
+  { id: "courses", href: "/courses", label: "课程", icon: BookOpen },
+  { id: "tasks", href: "/tasks", label: "任务", icon: CheckSquare },
+  { id: "focus", href: "/focus", label: "专注", icon: Timer },
+  { id: "reviews", href: "/reviews", label: "复习", icon: RefreshCcw },
 ];
 
 const resourceNavigation = [
-  { href: "/semesters", label: "学期", icon: GraduationCap },
-  { href: "/plans/today", label: "计划", icon: CalendarRange },
-  { href: "/materials", label: "资料", icon: FolderOpen },
-  { href: "/knowledge", label: "知识库", icon: Library },
-  { href: "/notes", label: "笔记", icon: NotebookPen },
-  { href: "/analytics", label: "分析", icon: BarChart3 },
-  { href: "/settings", label: "设置", icon: Settings },
+  { id: "semesters", href: "/semesters", label: "学期", icon: GraduationCap },
+  { id: "plans", href: "/plans/today", label: "计划", icon: CalendarRange },
+  { id: "materials", href: "/materials", label: "资料", icon: FolderOpen },
+  { id: "knowledge", href: "/knowledge", label: "知识库", icon: Library },
+  { id: "notes", href: "/notes", label: "笔记", icon: NotebookPen },
+  { id: "analytics", href: "/analytics", label: "分析", icon: BarChart3 },
+  { id: "settings", href: "/settings", label: "设置", icon: Settings },
 ];
 
 function NavLink({
@@ -83,16 +83,43 @@ function Brand() {
 export function AppShell({
   user,
   children,
+  visibleSidebarItems,
+  wallpaperUrl,
+  wallpaperOpacity,
+  wallpaperBlur,
 }: {
   user: { name: string; email: string };
   children: React.ReactNode;
+  visibleSidebarItems: string[];
+  wallpaperUrl: string | null;
+  wallpaperOpacity: number;
+  wallpaperBlur: number;
 }) {
   const pathname = usePathname();
+  const visibleMain = mainNavigation.filter((item) => visibleSidebarItems.includes(item.id));
+  const visibleResources = resourceNavigation.filter((item) => visibleSidebarItems.includes(item.id));
   const isActive = (href: string) =>
     href === "/dashboard" ? pathname === href : pathname.startsWith(href);
 
   return (
     <div className="min-h-screen bg-canvas">
+      {wallpaperUrl ? (
+        <>
+          <div
+            className="fixed inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${wallpaperUrl})` }}
+            aria-hidden
+          />
+          <div
+            className="fixed inset-0"
+            style={{
+              backgroundColor: `rgba(245, 245, 247, ${wallpaperOpacity / 100})`,
+              backdropFilter: `blur(${wallpaperBlur}px)`,
+            }}
+            aria-hidden
+          />
+        </>
+      ) : null}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-line/70 bg-surface/85 backdrop-blur-2xl md:flex">
         <Brand />
         <nav className="flex-1 overflow-y-auto px-3 py-4">
@@ -100,7 +127,7 @@ export function AppShell({
             主空间
           </p>
           <div className="space-y-0.5">
-            {mainNavigation.map((item) => (
+            {visibleMain.map((item) => (
               <NavLink
                 key={item.href}
                 href={item.href}
@@ -114,7 +141,7 @@ export function AppShell({
             内容
           </p>
           <div className="space-y-0.5">
-            {resourceNavigation.map((item) => (
+            {visibleResources.map((item) => (
               <NavLink
                 key={item.href}
                 href={item.href}
@@ -140,7 +167,7 @@ export function AppShell({
         </div>
       </aside>
 
-      <div className="md:pl-60">
+      <div className="relative z-10 md:pl-60">
         <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-line/70 bg-canvas/70 px-4 backdrop-blur-xl md:px-6">
           <div className="flex items-center gap-2 md:hidden">
             <Brand />
@@ -178,7 +205,7 @@ export function AppShell({
       </div>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 flex h-16 items-stretch overflow-x-auto border-t border-line/70 bg-white/90 shadow-[0_-1px_16px_rgba(0,0,0,0.05)] backdrop-blur-2xl md:hidden">
-        {[...mainNavigation, ...resourceNavigation].map((item) => {
+        {[...visibleMain, ...visibleResources].map((item) => {
           const active = isActive(item.href);
           const Icon = item.icon;
           return (

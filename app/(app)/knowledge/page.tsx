@@ -4,6 +4,7 @@ import { Library, Plus, Trash2 } from "lucide-react";
 
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
+import { KnowledgeTabs } from "@/components/knowledge-tabs";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { deleteKnowledgeAction } from "@/lib/actions/studyos";
@@ -16,9 +17,10 @@ export default async function KnowledgePage() {
 
   return (
     <>
+      <KnowledgeTabs active="/knowledge" />
       <PageHeader
-        title="知识库"
-        description="每一页知识都放在自己的书架上。"
+        title="知识书"
+        description="你提炼后的理解与方法。"
         action={
           <Link href="/knowledge/new">
             <Button variant="primary">
