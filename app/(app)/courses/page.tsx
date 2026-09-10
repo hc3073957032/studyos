@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { ProgressRing } from "@/components/ui/progress-ring";
 import { deleteCourseAction } from "@/lib/actions/studyos";
 import { getCurrentUserId, listCourses } from "@/lib/services/studyos";
 
@@ -65,8 +65,10 @@ export default async function CoursesPage() {
                   {course.chapters.length} 章 · {course._count.tasks} 个任务 ·{" "}
                   {course._count.notes} 条笔记 · {course._count.materials} 份资料
                 </p>
-                <Progress value={course.progress} className="mt-2 max-w-sm" />
               </Link>
+              <ProgressRing value={course.progress} size={48} stroke={4} color={course.color}>
+                <span className="text-[10px] font-semibold tabular-nums text-ink">{course.progress}%</span>
+              </ProgressRing>
               <form action={deleteCourseAction}>
                 <input type="hidden" name="id" value={course.id} />
                 <Button

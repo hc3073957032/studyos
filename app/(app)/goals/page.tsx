@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { IconOrb } from "@/components/ui/icon-orb";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import { ProgressRing } from "@/components/ui/progress-ring";
 import { deleteGoalAction } from "@/lib/actions/studyos";
 import { getCurrentUserId, listGoals } from "@/lib/services/studyos";
 
@@ -66,7 +66,12 @@ export default async function GoalsPage() {
                       ? `${completedMilestones}/${goal.milestones.length} 个阶段`
                       : "还没有阶段"}
                   </p>
-                  <Progress value={goal.progress} className="mt-2 max-w-xs" />
+                  <div className="mt-3 flex items-center gap-3">
+                    <ProgressRing value={goal.progress} size={42} stroke={4}>
+                      <span className="text-[9px] font-semibold tabular-nums text-ink">{goal.progress}%</span>
+                    </ProgressRing>
+                    <span className="text-xs text-secondary">阶段完成度</span>
+                  </div>
                 </Link>
                 <form action={deleteGoalAction}>
                   <input type="hidden" name="id" value={goal.id} />
