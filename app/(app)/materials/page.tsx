@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { KnowledgeTabs } from "@/components/knowledge-tabs";
 import { Button } from "@/components/ui/button";
+import { IconOrb } from "@/components/ui/icon-orb";
 import { deleteMaterialAction } from "@/lib/actions/studyos";
 import { getCurrentUserId, listMaterials } from "@/lib/services/studyos";
 
@@ -53,6 +54,7 @@ export default async function MaterialsPage() {
         <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
           {materials.map((material) => (
             <div key={material.id} className="group flex items-center gap-4 px-4 py-3">
+              <IconOrb icon={FolderOpen} tone="accent" className="soft-pop" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-ink">{material.name}</p>
                 <p className="mt-0.5 text-xs text-secondary">

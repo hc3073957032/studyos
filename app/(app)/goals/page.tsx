@@ -5,6 +5,7 @@ import { Plus, Target, Trash2 } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
+import { IconOrb } from "@/components/ui/icon-orb";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { deleteGoalAction } from "@/lib/actions/studyos";
@@ -50,6 +51,7 @@ export default async function GoalsPage() {
             const completedMilestones = goal.milestones.filter((item) => item.completed).length;
             return (
               <div key={goal.id} className="group flex items-center gap-4 px-4 py-4">
+                <IconOrb icon={Target} tone="accent" className="soft-pop" />
                 <Link href={`/goals/${goal.id}`} className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-sm font-semibold text-ink">{goal.title}</p>

@@ -42,6 +42,12 @@ export default async function CoursesPage() {
         <div className="overflow-hidden rounded-md divide-y divide-line overflow-hidden rounded-md border border-line bg-surface">
           {courses.map((course) => (
             <div key={course.id} className="group flex items-start gap-4 px-4 py-4">
+              <span
+                className="flex size-10 shrink-0 items-center justify-center rounded-full soft-pop"
+                style={{ backgroundColor: `${course.color}18`, color: course.color }}
+              >
+                <BookOpen className="size-4" aria-hidden />
+              </span>
               <Link href={`/courses/${course.id}`} className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-3">
                   <span

@@ -60,7 +60,7 @@ function NavLink({
     <Link
       href={href}
       className={cn(
-        "mx-1.5 flex h-9 items-center gap-3 rounded-md px-3 text-sm transition-all duration-200",
+        "group mx-1.5 flex h-10 items-center gap-3 rounded-full px-2.5 text-sm transition-all duration-200",
         active
           ? "bg-ink/[0.06] font-medium text-ink"
           : "text-secondary hover:bg-subtle/70 hover:text-ink",
@@ -244,7 +244,7 @@ export function AppShell({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl px-4 py-6 pb-24 md:px-8 md:py-8 md:pb-12">
+        <main className="app-page-enter mx-auto w-full max-w-6xl px-4 py-6 pb-24 md:px-8 md:py-8 md:pb-12">
           {children}
         </main>
       </div>

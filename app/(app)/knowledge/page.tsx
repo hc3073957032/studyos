@@ -59,6 +59,9 @@ export default async function KnowledgePage() {
                       className="absolute inset-0 flex flex-col overflow-hidden rounded-md border border-line bg-surface p-3 transition-colors duration-300 group-hover:border-line/80"
                     >
                       <div className="h-1 w-full rounded-full" style={{ backgroundColor: color }} />
+                      <span className="absolute right-3 top-4 flex size-9 items-center justify-center rounded-full bg-canvas text-[10px] font-semibold tabular-nums text-ink shadow-sm">
+                        {item.mastery}%
+                      </span>
                       <p className="mt-3 line-clamp-2 text-sm font-semibold leading-5 text-ink">
                         {item.title}
                       </p>

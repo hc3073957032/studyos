@@ -98,14 +98,17 @@ export function FocusConsole({
           ))}
         </div>
 
-        <p
-          className={`mt-10 text-center font-semibold tabular-nums ${
-            type === "TIMER" ? "text-6xl text-ink" : "text-7xl text-ink"
-          }`}
-          aria-live="polite"
-        >
-          {formatSeconds(type === "TIMER" ? elapsed : remaining)}
-        </p>
+        <div className="relative mt-8 flex size-64 items-center justify-center rounded-full border border-line bg-canvas/55">
+          <span className="gentle-pulse absolute inset-2 rounded-full border border-accent/15" aria-hidden />
+          <p
+            className={`relative text-center font-semibold tabular-nums ${
+              type === "TIMER" ? "text-6xl text-ink" : "text-7xl text-ink"
+            }`}
+            aria-live="polite"
+          >
+            {formatSeconds(type === "TIMER" ? elapsed : remaining)}
+          </p>
+        </div>
         <p className="mt-3 h-5 text-sm text-secondary">
           {isActive ? (paused ? "已暂停" : "专注中") : "准备开始"}
         </p>
