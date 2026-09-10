@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import pg from "pg";
 
-const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+const npmCli = path.join(path.dirname(process.execPath), "node_modules", "npm", "bin", "npm-cli.js");
 const root = process.cwd();
 const env = {
   ...process.env,
@@ -16,11 +16,10 @@ const taskkillPath =
     ? path.join(process.env.SystemRoot ?? "C:\\Windows", "System32", "taskkill.exe")
     : "taskkill";
 
-const dbProcess = spawn(npmCommand, ["run", "db:start"], {
+const dbProcess = spawn(process.execPath, [npmCli, "run", "db:start"], {
   cwd: root,
   env,
   stdio: "inherit",
-  shell: process.platform === "win32",
 });
 
 function killProcessTree(pid) {
@@ -97,11 +96,10 @@ try {
 }
 
 if (!existsSync(path.join(root, ".next", "BUILD_ID"))) {
-  const buildProcess = spawn(npmCommand, ["run", "build"], {
+  const buildProcess = spawn(process.execPath, [npmCli, "run", "build"], {
     cwd: root,
     env,
     stdio: "inherit",
-    shell: process.platform === "win32",
   });
   const buildCode = await new Promise((resolve) => {
     buildProcess.on("exit", (code) => resolve(code));
@@ -112,11 +110,10 @@ if (!existsSync(path.join(root, ".next", "BUILD_ID"))) {
   }
 }
 
-const devProcess = spawn(npmCommand, ["run", "start"], {
+const devProcess = spawn(process.execPath, [npmCli, "run", "start"], {
   cwd: root,
   env,
   stdio: "inherit",
-  shell: process.platform === "win32",
 });
 
 devProcess.on("exit", (code) => {

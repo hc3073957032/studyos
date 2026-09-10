@@ -28,3 +28,9 @@ npm-debug.log*
 
 # user uploads
 /public/uploads/
+
+# desktop packaging
+/release/
+/.builder-cache/
+/.builder-config/
+/.tmp/

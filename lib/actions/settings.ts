@@ -18,17 +18,21 @@ async function requireUserId() {
   return userId;
 }
 
-function localWallpaperPath(url: string | null) {
-  if (!url?.startsWith("/uploads/wallpapers/")) {
-    return null;
-  }
-  return path.join(
-    process.cwd(),
-    "public",
-    "uploads",
-    "wallpapers",
-    path.basename(url),
+function wallpaperDirectory() {
+  return (
+    process.env.STUDYOS_UPLOAD_DIR ??
+    path.join(process.cwd(), "public", "uploads", "wallpapers")
   );
+}
+
+function localWallpaperPath(url: string | null) {
+  let filename: string | null = null;
+  if (url?.startsWith("/api/wallpaper/")) {
+    filename = path.basename(url);
+  } else if (url?.startsWith("/uploads/wallpapers/")) {
+    filename = path.basename(url);
+  }
+  return filename ? path.join(/* turbopackIgnore: true */ wallpaperDirectory(), filename) : null;
 }
 
 export async function updateDisplaySettingsAction(formData: FormData) {
@@ -92,7 +96,7 @@ export async function uploadWallpaperAction(formData: FormData) {
     redirect("/settings?error=wallpaper-format");
   }
 
-  const directory = path.join(process.cwd(), "public", "uploads", "wallpapers");
+  const directory = wallpaperDirectory();
   await mkdir(directory, { recursive: true });
   const filename = `${userId}-${randomUUID()}.${extension}`;
   await writeFile(
@@ -108,10 +112,10 @@ export async function uploadWallpaperAction(formData: FormData) {
 
   await prisma.userSettings.upsert({
     where: { userId },
-    update: { wallpaperUrl: `/uploads/wallpapers/${filename}` },
+    update: { wallpaperUrl: `/api/wallpaper/${filename}` },
     create: {
       userId,
-      wallpaperUrl: `/uploads/wallpapers/${filename}`,
+      wallpaperUrl: `/api/wallpaper/${filename}`,
     },
   });
 

@@ -1,47 +1,79 @@
 {
-  "name": "studyos",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "db:start": "node scripts/db/start.mjs",
-    "open": "node scripts/dev.mjs"
-  },
-  "dependencies": {
-    "@auth/prisma-adapter": "^2.11.3",
-    "@prisma/client": "^6.19.3",
-    "bcryptjs": "^3.0.3",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "d3-force": "^3.0.0",
-    "embedded-postgres": "^18.4.0-beta.17",
-    "lucide-react": "^1.43.0",
-    "next": "^16.3.4",
-    "next-auth": "^5.0.0-beta.32",
-    "pg": "^8.23.0",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "tailwind-merge": "^3.3.1",
-    "zod": "^4.5.4"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
-    "@types/d3-force": "^3.0.10",
-    "@types/node": "^24.0.0",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
-    "eslint": "^9.0.0",
-    "eslint-config-next": "^16.3.4",
-    "postcss": "^8.5.0",
-    "prisma": "^6.19.3",
-    "tailwindcss": "^4.3.3",
-    "typescript": "^5.9.3",
-    "vitest": "^5.0.0"
-  }
+    "name": "studyos",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "eslint .",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "db:start": "node scripts/db/start.mjs",
+        "open": "node scripts/dev.mjs",
+        "app": "electron .",
+        "app:build": "node scripts/package-app.mjs"
+    },
+    "dependencies": {
+        "@auth/prisma-adapter": "^2.11.3",
+        "@prisma/client": "^6.19.3",
+        "bcryptjs": "^3.0.3",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "d3-force": "^3.0.0",
+        "embedded-postgres": "^18.4.0-beta.17",
+        "lucide-react": "^1.43.0",
+        "next": "^16.3.4",
+        "next-auth": "^5.0.0-beta.32",
+        "pg": "^8.23.0",
+        "react": "^19.2.8",
+        "react-dom": "^19.2.8",
+        "tailwind-merge": "^3.3.1",
+        "zod": "^4.5.4"
+    },
+    "devDependencies": {
+        "@tailwindcss/postcss": "^4.3.3",
+        "@types/d3-force": "^3.0.10",
+        "@types/node": "^24.0.0",
+        "@types/react": "^19.2.0",
+        "@types/react-dom": "^19.2.0",
+        "electron": "^44.3.0",
+        "electron-builder": "^26.15.3",
+        "eslint": "^9.0.0",
+        "eslint-config-next": "^16.3.4",
+        "postcss": "^8.5.0",
+        "prisma": "^6.19.3",
+        "tailwindcss": "^4.3.3",
+        "typescript": "^5.9.3",
+        "vitest": "^5.0.0"
+    },
+    "main": "electron/main.cjs",
+    "build": {
+        "appId": "com.studyos.desktop",
+        "productName": "StudyOS",
+        "asar": false,
+        "directories": {
+            "output": "release"
+        },
+        "files": [
+            ".next/**",
+            "public/**",
+            "prisma/**",
+            "node_modules/**",
+            "package.json",
+            "next.config.ts",
+            "electron/**"
+        ],
+        "win": {
+            "target": [
+                "portable"
+            ]
+        },
+        "portable": {
+            "artifactName": "StudyOS-${version}.exe"
+        }
+    },
+    "description": "Personal Learning OS desktop app",
+    "author": "hc3073957032"
 }
