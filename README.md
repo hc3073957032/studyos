@@ -34,7 +34,7 @@ npm run build
 
 最简单的方式：双击项目根目录里的 `Start-StudyOS.bat`。
 
-脚本会自动：
+脚本会以 production 模式自动：
 1. 启动本地 PostgreSQL
 2. 启动 Next.js 开发服务器
 3. 等待网站就绪后打开浏览器

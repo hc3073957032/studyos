@@ -1,4 +1,5 @@
 import { spawn, spawnSync } from "node:child_process";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import pg from "pg";
 
@@ -95,7 +96,23 @@ try {
   process.exit(1);
 }
 
-const devProcess = spawn(npmCommand, ["run", "dev"], {
+if (!existsSync(path.join(root, ".next", "BUILD_ID"))) {
+  const buildProcess = spawn(npmCommand, ["run", "build"], {
+    cwd: root,
+    env,
+    stdio: "inherit",
+    shell: process.platform === "win32",
+  });
+  const buildCode = await new Promise((resolve) => {
+    buildProcess.on("exit", (code) => resolve(code));
+  });
+  if (buildCode !== 0) {
+    killProcessTree(dbProcess.pid);
+    process.exit(buildCode ?? 1);
+  }
+}
+
+const devProcess = spawn(npmCommand, ["run", "start"], {
   cwd: root,
   env,
   stdio: "inherit",
